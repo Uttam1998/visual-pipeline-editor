@@ -1,0 +1,604 @@
+/* ========================================================
+   VectorShift Pipeline Builder — Global Design System
+   Dark theme, inspired by modern AI/ML tooling UIs.
+   ======================================================== */
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+  background: #0a0e1a;
+  color: #e2e8f0;
+  overflow: hidden;
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================================================
+   APP SHELL LAYOUT
+   ======================================================== */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ---------- Top Header Bar ---------- */
+.app-header {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 52px;
+  background: #111827;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.app-logo-icon {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.app-logo-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e2e8f0;
+  letter-spacing: -0.01em;
+}
+
+.app-logo-badge {
+  font-size: 10px;
+  padding: 2px 7px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 4px;
+  color: #818cf8;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Main Content (sidebar + canvas) ---------- */
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ========================================================
+   LEFT SIDEBAR / TOOLBAR
+   ======================================================== */
+
+.toolbar-sidebar {
+  width: 210px;
+  background: #111827;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-y: auto;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 12px;
+}
+
+.toolbar-sidebar::-webkit-scrollbar { width: 4px; }
+.toolbar-sidebar::-webkit-scrollbar-track { background: transparent; }
+.toolbar-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+}
+
+.toolbar-section {
+  padding: 16px 12px 6px;
+}
+
+.toolbar-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.3);
+  padding: 0 4px;
+  margin-bottom: 8px;
+}
+
+.toolbar-nodes {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* ---------- Draggable Node (sidebar item) ---------- */
+.draggable-node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  cursor: grab;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+  user-select: none;
+  -webkit-user-drag: element;
+}
+
+.draggable-node:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateX(3px);
+}
+
+.draggable-node:active {
+  cursor: grabbing;
+  transform: scale(0.97);
+}
+
+.draggable-node-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.draggable-node-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+/* ========================================================
+   CANVAS
+   ======================================================== */
+
+.canvas-container {
+  flex: 1;
+  position: relative;
+}
+
+.react-flow {
+  background: #0d1117;
+}
+
+/* ========================================================
+   SUBMIT AREA (bottom bar)
+   ======================================================== */
+
+.submit-area {
+  background: #111827;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 32px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 14px rgba(99, 102, 241, 0.35);
+  letter-spacing: 0.01em;
+  font-family: inherit;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.55);
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========================================================
+   BASE NODE
+   ======================================================== */
+
+.base-node {
+  background: #1e2333;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid var(--node-accent, #6366f1);
+  border-radius: 10px;
+  min-width: 220px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  transition: box-shadow 0.2s;
+  position: relative;
+}
+
+.base-node:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* ---- Node Header ---- */
+.node-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px 9px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.node-icon {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--node-accent, #6366f1);
+  min-width: 16px;
+  text-align: center;
+}
+
+.node-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ---- Node Body ---- */
+.node-body {
+  padding: 11px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+/* ---- Form Fields ---- */
+.node-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.node-field label {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.38);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.node-field input[type="text"],
+.node-field input[type="url"],
+.node-field input[type="number"],
+.node-field select,
+.node-field textarea {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 12px;
+  font-family: inherit;
+  padding: 5px 9px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+  resize: none;
+}
+
+.node-field input:focus,
+.node-field select:focus,
+.node-field textarea:focus {
+  border-color: var(--node-accent, #6366f1);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.node-field select { cursor: pointer; }
+
+.node-field select option {
+  background: #1e2333;
+  color: #e2e8f0;
+}
+
+/* ========================================================
+   LLM NODE — connection guide inside body
+   ======================================================== */
+
+.node-connection-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.connection-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.connection-row-right { justify-content: flex-end; }
+
+.connection-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.input-dot  { background: rgba(255, 255, 255, 0.3); }
+.output-dot { background: var(--node-accent, #6366f1); }
+
+.connection-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 2px 0;
+}
+
+.connection-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ========================================================
+   TEXT NODE — variable handles & chips
+   ======================================================== */
+
+.var-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.var-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 4px;
+  font-size: 10px;
+  color: #60a5fa;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+/* ========================================================
+   FILTER NODE — output branch labels
+   ======================================================== */
+
+.node-output-labels {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.output-label-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+}
+
+.true-tag {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.false-tag {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* ========================================================
+   REACT FLOW OVERRIDES
+   ======================================================== */
+
+.react-flow__handle {
+  width: 10px !important;
+  height: 10px !important;
+  border: 2px solid #1e2333 !important;
+  background: var(--node-accent, #6366f1) !important;
+  transition: transform 0.12s !important;
+}
+
+.react-flow__handle:hover {
+  transform: scale(1.5) !important;
+}
+
+.react-flow__edge-path {
+  stroke: rgba(99, 102, 241, 0.55);
+  stroke-width: 1.5;
+}
+
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: rgba(99, 102, 241, 0.9);
+  stroke-width: 2;
+}
+
+.react-flow__controls {
+  background: #1e2333 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+}
+
+.react-flow__controls-button {
+  background: #1e2333 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  color: #94a3b8 !important;
+  fill: #94a3b8 !important;
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+}
+
+.react-flow__minimap {
+  background: #1e2333 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+}
+
+.react-flow__minimap-mask { fill: rgba(0, 0, 0, 0.45) !important; }
+.react-flow__minimap-node { fill: #6366f1 !important; }
+
+.react-flow__selection {
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+}
+
+/* ========================================================
+   RESULTS MODAL
+   ======================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal-card {
+  background: #1e2333;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 28px;
+  min-width: 330px;
+  max-width: 460px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.65);
+  animation: slideUp 0.18s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.modal-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 15px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  margin-bottom: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.modal-stat-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.modal-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.modal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 13px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.modal-badge.dag {
+  background: rgba(16, 185, 129, 0.14);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.modal-badge.not-dag {
+  background: rgba(239, 68, 68, 0.14);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.modal-close-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #e2e8f0;
+}
